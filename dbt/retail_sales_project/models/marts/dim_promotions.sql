@@ -1,0 +1,84 @@
+--with promotions as (
+--
+--    select *
+--
+--    from {{ ref('stg_promotions') }}
+--
+--)
+--
+--select
+--
+----------------------------------------------------
+---- Primary Key
+----------------------------------------------------
+--
+--promotion_id,
+--
+----------------------------------------------------
+---- Product Reference
+----------------------------------------------------
+--
+--product_id,
+--
+----------------------------------------------------
+---- Promotion Information
+----------------------------------------------------
+--
+--promotion_name,
+--
+--promotion_type,
+--
+--category,
+--
+--brand,
+--
+----------------------------------------------------
+---- Discount
+----------------------------------------------------
+--
+--discount_percentage,
+--
+----------------------------------------------------
+---- Promotion Period
+----------------------------------------------------
+--
+--start_date,
+--
+--end_date,
+--
+----------------------------------------------------
+---- Status
+----------------------------------------------------
+--
+--status,
+--
+----------------------------------------------------
+---- Audit Columns
+----------------------------------------------------
+--
+--created_at,
+--
+--updated_at
+--
+--from promotions
+
+--this is same as
+
+with promotions as(
+    select * from {{ ref('stg_promotions')}}
+)
+
+select * from promotions
+
+--Reports using this dimension
+--
+--Power BI can build reports such as:
+--
+--✅ Sales During Promotions
+--✅ Revenue by Promotion
+--✅ Promotion-wise Profit
+--✅ Promotion Effectiveness
+--✅ Discount Percentage Analysis
+--✅ Active vs Inactive Promotions
+--✅ Promotion Performance by Category
+--✅ Promotion Performance by Brand

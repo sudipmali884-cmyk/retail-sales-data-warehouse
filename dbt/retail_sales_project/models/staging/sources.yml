@@ -1,0 +1,293 @@
+version: 2
+sources:
+  - name: raw
+    database: retail_db
+    schema: raw
+    tables:
+      - name: customers
+      - name: stores
+      - name: employees
+      - name: products
+      - name: inventory
+      - name: promotions
+      - name: sales
+      - name: returns
+
+# run - dbt parse
+
+models:
+  - name: stg_customers
+    description: cleaned customers table
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        tests:
+          - not_null
+      - name: last_name
+        tests:
+          - not_null
+
+      - name: email
+        tests:
+          - not_null
+      - name: gender
+        tests:
+          - accepted_values:
+              values:
+                - Male
+                - Female
+
+      - name: customer_status
+        tests:
+          - accepted_values:
+              values:
+                - Active
+                - Inactive
+  - name: stg_stores
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+      - name: store_name
+        tests:
+          - not_null
+      - name: store_type
+        tests:
+          - accepted_values:
+              values:
+                - Supermarket
+                - Hypermarket
+                - Express
+                - Wholesale
+                - Bazaar
+                - Mart
+      - name: city
+        tests:
+          - not_null
+      - name: state
+        tests:
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+             values:
+                - Active
+                - Closed
+                - Renovation
+  - name: stg_employees
+    columns:
+      - name: employee_id
+        tests:
+          - unique
+          - not_null
+      - name: employee_name
+        tests:
+          - not_null
+
+      - name: gender
+        tests:
+          - accepted_values:
+             values:
+              - Male
+              - Female
+
+
+      - name: designation
+        tests:
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                - Active
+                - Resigned
+
+                - On Leave
+                - Unknown
+
+  - name: stg_products
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+
+      - name: product_name
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - accepted_values:
+              values:
+                - Grocery
+                - Dairy
+                - Beverages
+                - Snacks
+                - Personal Care
+                - Household
+
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                - Active
+                - Discontinued
+                - Unknown
+  - name: stg_inventory
+    columns:
+      - name: inventory_id
+        tests:
+          - unique
+          - not_null
+#      - name: store_id
+#        tests:
+#          - not_null
+#          - relationships:
+#              to: ref('stg_stores')
+#              field: store_id
+#      - name: product_id
+#        tests:
+#          - not_null
+#          - relationships:
+#              to: ref('stg_products')
+#              field: product_id
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                - Available
+                - Low Stock
+                - Out Of Stock
+                - Unknown
+
+      - name: last_stock_date
+
+  - name: stg_promotions
+    columns:
+      - name: promotion_id
+        tests:
+          - unique
+          - not_null
+      - name: promotion_name
+        tests:
+          - not_null
+      - name: promotion_type
+        tests:
+          - accepted_values:
+              values:
+                - Flat Discount
+                - Percentage Discount
+                - Buy One Get One
+                - Festival Offer
+                - Clearance Sale
+                - Unknown
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                - Active
+                - Expired
+                - Scheduled
+                - Unknown
+  - name: stg_sales
+    columns:
+      - name: sale_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: store_id
+        tests:
+          - relationships:
+              to: ref('stg_stores')
+              field: store_id
+      - name: employee_id
+        tests:
+          - relationships:
+              to: ref('stg_employees')
+              field: employee_id
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: payment_method
+        tests:
+          - accepted_values:
+              values:
+                - Cash
+                - UPI
+                - Credit Card
+                - Debit Card
+                - Net Banking
+                - Unknown
+      - name: sales_status
+        tests:
+          - accepted_values:
+              values:
+                - Completed
+                - Returned
+                - Cancelled
+                - Unknown
+      - name: sale_date
+        tests:
+          - not_null
+  - name: stg_returns
+    columns:
+      - name: return_id
+        tests:
+          - unique
+          - not_null
+      - name: sale_id
+        tests:
+          - relationships:
+              to: ref('stg_sales')
+              field: sale_id
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: store_id
+        tests:
+          - relationships:
+              to: ref('stg_stores')
+              field: store_id
+      - name: employee_id
+        tests:
+          - relationships:
+              to: ref('stg_employees')
+              field: employee_id
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+
+      - name: refund_method
+        tests:
+          - accepted_values:
+              values:
+                - Cash
+                - UPI
+                - Credit Card
+                - Debit Card
+                - Net Banking
+                - Unknown
+
+      - name: return_status
+        tests:
+          - accepted_values:
+              values:
+                - Approved
+                - Pending
+                - Rejected
+                - Unknown
